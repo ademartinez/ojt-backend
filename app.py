@@ -6,12 +6,13 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.image import MIMEImage
 from dotenv import load_dotenv
+import json
 
 # Load environment variables
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}})
 
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
@@ -28,6 +29,35 @@ os.makedirs(DEFECTIVE_PART_IMAGES_FOLDER, exist_ok=True)
 UPLOAD_FOLDER = './uploads'
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
+
+# Path to the text file
+file_path = os.path.join(os.path.dirname(__file__), 'engineers.txt')
+
+# Endpoint to get the list of engineers
+@app.route('/api/engineers', methods=['GET'])
+def get_engineers():
+    try:
+        with open(file_path, 'r') as file:
+            data = file.read()
+        engineers = [line.strip() for line in data.split('\n') if line.strip()]
+        return jsonify(engineers)
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'message': 'Failed to read engineers list.'}), 500
+
+# Endpoint to update the list of engineers
+@app.route('/api/engineers', methods=['POST'])
+def update_engineers():
+    try:
+        engineers = request.json.get('engineers')
+        if not isinstance(engineers, list):
+            return jsonify({'message': 'Invalid data format.'}), 400
+        with open(file_path, 'w') as file:
+            file.write('\n'.join(engineers))
+        return jsonify({'message': 'Engineers list updated successfully.'})
+    except Exception as e:
+        print(f"Error: {str(e)}")
+        return jsonify({'message': 'Failed to update engineers list.'}), 500
 
 @app.route('/send-email', methods=['POST'])
 def send_email():
@@ -85,11 +115,11 @@ def send_email():
             <style> 
                 body {{ 
                     font-family: Aptos;
-                    }}
+                }}
                 pre {{
                     font-family: Aptos;                    
                     margin: 0 20px;
-                    }} 
+                }} 
             </style>
         </head>
         <body>
