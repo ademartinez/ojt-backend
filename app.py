@@ -229,6 +229,11 @@ def send_email():
                     img.add_header('Content-ID', f'<image{index}>')
             img.add_header('Content-Disposition', 'inline', filename=file.filename)  # Ensure inline display
             msg.attach(img)
+
+            # Delete the file after attaching it to the email
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"Deleted file: {file_path}")
         
         # Send the email
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
@@ -367,7 +372,12 @@ def send_email_HPQ():
                     img.add_header('Content-ID', f'<image{index}>')
                 img.add_header('Content-Disposition', 'inline', filename=file.filename)  # Ensure inline display
                 msg.attach(img)
-        
+
+            # Delete the file after attaching it to the email
+            if os.path.exists(file_path):
+                os.remove(file_path)
+                print(f"Deleted file: {file_path}")
+
         # Send the email
         with smtplib.SMTP('smtp.gmail.com', 587) as server:
             server.starttls()
