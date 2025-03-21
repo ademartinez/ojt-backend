@@ -16,6 +16,9 @@ CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://parts
 
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
+PASSWORD = os.getenv('APP_PASSWORD')  # Replace 'default-password' with a fallback
+if not PASSWORD:
+    raise ValueError("APP_PASSWORD environment variable is not set!")
 
 # Ensure the uploads directory exists
 # Define separate upload folders
@@ -35,6 +38,15 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 # Path to the text file
 file_path = os.path.join(os.path.dirname(__file__), 'engineers.txt')
+
+# Password validation route
+@app.route('/api/validate-password', methods=['POST'])
+def validate_password():
+    data = request.json
+    if data.get('password') == PASSWORD:
+        return jsonify({'authenticated': True}), 200
+    else:
+        return jsonify({'authenticated': False}), 401
 
 # Endpoint to get the list of engineers
 @app.route('/api/engineers', methods=['GET'])
