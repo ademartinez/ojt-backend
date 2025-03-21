@@ -12,7 +12,7 @@ import json
 load_dotenv()
 
 app = Flask(__name__)
-CORS(app, resources={r"/*": {"origins": "http://localhost:3000"}}) #possible change when deploying
+CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://parts-request.vercel.app"]}}) #possible change when deploying
 
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
