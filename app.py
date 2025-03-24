@@ -105,8 +105,8 @@ def send_email():
         CSDPAttachment = request.form['CSDPAttachment']
         emailCoordinator = request.form['emailCoordinator']
         emailAssignedEngineer = request.form['emailAssignedEngineer']
-        ccBody = request.form['ccBody']
-        ccEmail = request.form['ccEmail']
+        carbonBody = request.form['carbonBody']
+        carbonEmail = request.form['carbonEmail']
         
         # Get recipients and CCs from the form data
         recipients = [request.form[key] for key in request.form if key.startswith('recipient')]
@@ -212,7 +212,7 @@ def send_email():
      <p>With CSDP Attachment                                                : {CSDPAttachment}<br>
         Email Address Coordinator (Handling CSDP)                           : {emailCoordinator}<br>
         Email Address of Assigned Engineer                                  : {emailAssignedEngineer}<br>
-        CC: {ccBody} {ccEmail}</p>
+        CC: {carbonBody} {carbonEmail}</p>
       
      <p>Regards,</p>
      <p>{attendingEngineer}</p>
