@@ -13,6 +13,8 @@ load_dotenv()
 
 app = Flask(__name__)
 CORS(app, resources={r"/*": {"origins": ["http://localhost:3000", "https://parts-request.vercel.app"]}}) #possible change when deploying
+#CORS(app, resources={r"/*": {"origins": ["http://localhost:3000"]}}) #possible change when deploying
+
 
 EMAIL_USER = os.getenv('EMAIL_USER')
 EMAIL_PASSWORD = os.getenv('EMAIL_PASSWORD')
@@ -176,16 +178,9 @@ def send_email():
         </ul>
         """ 
 
-        # Add general images to the email body
-        body += "<p>Picture/Image(s):</p>"
-        for index, key in enumerate(request.files):
-            if not key.startswith("defectivePartCTCodeImage"):  # Skip defectivePartCTCodeImage files
-                body += f'<img src="cid:image{index}" alt="User Image {index + 1}" style="max-width: 400px; height: auto;" /><br>'
-
         body += """
         <br>
         <p>Defective Part CT Code:</p>
-        <br>
         """
 
         # Add defectivePartCTCode values paired with their images to the email body
@@ -213,7 +208,15 @@ def send_email():
         Email Address Coordinator (Handling CSDP)                           : {emailCoordinator}<br>
         Email Address of Assigned Engineer                                  : {emailAssignedEngineer}<br>
         CC: {carbonBody} {carbonEmail}</p>
-      
+      """
+        
+        # Add general images to the email body
+        body += "<p>Picture/Image(s):</p>"
+        for index, key in enumerate(request.files):
+            if not key.startswith("defectivePartCTCodeImage"):  # Skip defectivePartCTCodeImage files
+                body += f'<img src="cid:image{index}" alt="User Image {index + 1}" style="max-width: 400px; height: auto;" /><br>'
+
+        body += f"""
      <p>Regards,</p>
      <p>{attendingEngineer}</p>
         </body>
